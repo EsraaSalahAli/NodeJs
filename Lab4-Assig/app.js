@@ -31,7 +31,8 @@
 // --------------------------------Question 2------------------------------  //
 
 const express = require('express');
-const fs=require("fs");
+const fs = require("fs");
+var bcrypt = require('bcrypt');
 
 const app = express();
 
@@ -63,9 +64,8 @@ app.get('/Signup', (req, res, next) => {
 
 // const user = [];
 
-    /** Process POST request */
+/** Process POST request */
 app.post('/Signup', function (req, res, next) {
-    res.send(JSON.stringify(req.body));
 
     // read the JSON file as string
     const jsonData = fs.readFileSync('Users.json');
@@ -74,34 +74,35 @@ app.post('/Signup', function (req, res, next) {
     const data = JSON.parse(jsonData);
 
     // add new data to the array
-            const newUser = {
-            username: req.body.username,
-            email: req.body.email,
-            password: req.body.password,
-          };
+    const newUser = {
+        username: req.body.username,
+        email: req.body.email,
+        password: req.body.password,
+    };
 
-    data.push(newUser);
-
-    // convert updated JavaScript object to JSON string
-    const updatedData = JSON.stringify(data, null, 2);
-
-    // write the updated JSON string back to the file
-    fs.writeFileSync('Users.json', updatedData);
-
-
-    // if (file.length == 0) {
-    //     //add data to json file
-    //     fs.writeFileSync("Users.json", JSON.stringify([user]))
-    // } else {
-    //     // add json element to json object
-    //     const newUser = {
-    //         username: req.body.username,
-    //         email: req.body.email,
-    //         password: req.body.password,
-    //       };
-    //     user.push(newUser);
-    //     console.log(user);
-    // }
+    var searchData = jsonData.includes(newUser.email)
+    console.log(searchData)
+    if (searchData) {
+        console.log("Email exists");
+        res.send(`<head>
+        <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
+        </head>
+        <body>
+        <h1>Email is already exist</h1>
+        </body>`);
+    }
+    else {
+        console.log("wrong")
+        data.push(newUser);
+        res.send(`<head>
+        <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
+        </head>
+        <body>
+        <h1>${newUser.username}</h1>
+        <h3>${newUser.email}</h3>
+        <h3>${newUser.password}</h3>
+        </body>`);
+    }
 });
 
 app.get('/Login', (req, res, next) => {
@@ -109,7 +110,7 @@ app.get('/Login', (req, res, next) => {
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' data:; img-src 'self' data: *; font-src 'self' data: fonts.gstatic.com">    
     </head>
     <body>
-    <form method="POST" action="/Signup">
+    <form method="POST" action="/Login">
     <input type="email" name="email" placeholder="email">
     <br>
     <input type="password" name="password" placeholder="password">
@@ -121,7 +122,77 @@ app.get('/Login', (req, res, next) => {
 
 /** Process POST request */
 app.post('/Login', function (req, res, next) {
-    
+    // // read the JSON file as string
+    // const jsonData = fs.readFileSync('Users.json');
+
+    // // parse JSON string
+    // const data = JSON.parse(jsonData);
+
+    // // add new data to the array
+    // const newUser = {
+    // // username: req.body.username,
+    // email: req.body.email,
+    // password: req.body.password,
+    // };
+
+    // // var searchData=jsonData.includes(newUser.email&&newUser.password)
+    // // console.log(searchData)
+    // if(jsonData.includes(newUser.email&&newUser.password)==true){
+    //     console.log("Login Success");
+    //     res.send(`<head>
+    //     <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
+    //     </head>
+    //     <body>
+    //     <h1>${jsonData.find(user=>user.email==newUser.email).username}</h1>
+    //     <h3>${newUser.email}</h3>
+    //     <h3>${newUser.password}</h3>
+    //     </body>`);
+    // }
+    // else if(jsonData.includes(newUser.email)==false){
+    //     console.log("wrong email")
+    //     res.send(`<head>
+    //     <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
+    //     </head>
+    //     <body>
+    //     <h1>You Entered Wrong Email</h1>
+    //     </body>`);
+    // }
+
+    // try {
+    //     // Get user input
+    //     const { email, password } = req.body;
+    //     console.log(email)
+    //     console.log(password)
+    //     // Validate user input
+    //     if (!(email && password)) {
+    //         res.sendsend("All input is required");
+    //     }
+    //     // Validate if user exist in our database
+
+    //     const jsonData = fs.readFileSync('Users.json');
+
+    //     const user = jsonData.find(u => u);
+    //     console.log(password)
+    //     console.log(req.body.password)
+    //     console.log(user && (bcrypt.compare(password, req.body.password)))
+
+    //     if (user && (bcrypt.compare(password, req.body.password))) {
+    //         // user
+    //         res.send(`<head>
+    //            <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">
+    //            </head>
+    //            <body>
+    //            <h1>${jsonData.find(u => u.email == user.email).username}</h1>
+    //            <h3>${user.email}</h3>
+    //            <h3>${user.password}</h3>
+    //            </body>`);
+    //     }
+    //     else {
+    //         res.send("Invalid Credentials");
+    //     }
+    // } catch (err) {
+    //     console.log(err);
+    // }
 });
 
 
