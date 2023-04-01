@@ -1,0 +1,15 @@
+{
+  "name": "lab5-assigchat",
+  "version": "1.0.0",
+  "description": "Chat App",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "iti",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1"
+  }
+}

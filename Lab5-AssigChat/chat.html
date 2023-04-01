@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
+        integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body class="bg-dark">
+    <div class="container">
+        <div class="row">
+            <div class="bg-white my-5" id="d2"></div>
+
+            <textarea style="resize: none;" class="form-control col-md-10 mx-auto my-5" type="text"
+                id="chat"></textarea></br>
+            <button type="submit" class="btn btn-primary text-center" onClick="sendMessage()">send message</button>
+
+
+        </div>
+    </div>
+    <script>
+        var socket = io.connect('localhost:3000')
+
+        socket.on('all', function (data) {
+            document.getElementById("d2").innerHTML += "User: " + data + "<br/>";
+
+        });
+        function sendMessage() {
+            var chat = document.getElementById('chat').value
+            socket.emit('message', chat)
+        }
+    </script>
+
+    <body>
+
+</html>
